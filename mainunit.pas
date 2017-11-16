@@ -14,6 +14,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+  Panel1: TPanel;
   ShowAll: TBitBtn;
     MenuItemAbout: TMenuItem;
     MenuItemRef: TMenuItem;
@@ -28,7 +29,6 @@ type
     VerScrollBar: TScrollBar;
     procedure ShowAllClick(Sender: TObject);
     procedure PaintBoxClick(Sender: TObject);
-    procedure PaintBoxResize(Sender: TObject);
     procedure ToolBtnClick(ASender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure MenuItemAboutClick(Sender: TObject);
@@ -74,11 +74,11 @@ var
   PropertyPanel:TPanel;
 begin
   PropertyPanel        :=TPanel.Create(Mainform);
-  PropertyPanel.Parent :=Mainform;
+  PropertyPanel.Parent :=Panel1;
   PropertyPanel.Name   :='PropertyPanel';
   PropertyPanel.Caption:='';
   PropertyPanel.Width  :=300;
-  PropertyPanel.Height :=50;
+  PropertyPanel.Height :=79;
   PropertyPanel.align  :=alBottom;
   CTool.PropertiesCreate(PropertyPanel);
 end;
@@ -105,7 +105,7 @@ begin
     b           :=TSpeedButton.Create(MainForm);
     b.Parent    :=MainForm.LSidePanel;
     b.name      :='ToolSpdBtn'+IntToStr(i+1);
-    b.Glyph     := ToolRegistry[i].Bitmap;
+    b.Glyph     :=ToolRegistry[i].Bitmap;
     b.Tag       :=Integer(i);
     b.Left      :=5+ (i mod 2)*40;
     b.Top       :=20+(i div 2)*40;
@@ -114,13 +114,9 @@ begin
     b.GroupIndex:=1;
     b.Down      :=true;
     b.OnClick   :=@ToolBtnClick;
-    b.color:=clWhite;
+    b.color     :=clWhite;
   end;
-  CTool           := ToolRegistry[0];
-  VerScrollBar.Max:=round(W2S(MaxFloatPoint).y);
-  VerScrollBar.Min:=round(W2S(MinFloatPoint).y);
-  HorScrollBar.Max:=round(W2S(MaxFloatPoint).x);
-  HorScrollBar.Min:=round(W2S(MinFloatPoint).x);
+  CTool           :=ToolRegistry[0];
   ScaleEdit.Value :=round(Scale);
   CreatePropertyPanel;
   Invalidate;
@@ -167,30 +163,34 @@ end;
 
 procedure TMainForm.PaintBoxPaint(Sender: TObject);
 var f: TFigure;
+  MaxP, MinP: TFloatPoint;
 begin
   PaintBox.Canvas.Brush.Color:=clWhite;
   PaintBox.canvas.FillRect(PaintBox.Canvas.ClipRect);
   for f in Figures do
     f.Draw(PaintBox.canvas);
-
-  if round(MinFloatPoint.X*scale/100)<HorScrollBar.Min then
-    HorScrollBar.Min:=round(MinFloatPoint.X*scale/100);
-  if HorScrollBar.Max<round(MaxFloatPoint.X*scale/100) then
-    HorScrollBar.Max:=round(MaxFloatPoint.X*scale/100);
-  if round(MinFloatPoint.Y*scale/100)<VerScrollBar.Min then
-    VerScrollBar.Min:=round(MinFloatPoint.Y*scale/100);
-  if VerScrollBar.Max<round(MaxFloatPoint.Y*scale/100) then
-    VerScrollBar.Max:=round(MaxFloatPoint.Y*scale/100);
-
-  if Offset.x+PaintBox.Width>HorScrollBar.Max then
-    HorScrollBar.Max:=Offset.x+PaintBox.Width;
-  if Offset.x<HorScrollBar.Min then
-    HorScrollBar.Min:=Offset.x;
-  if Offset.y+PaintBox.Height>VerScrollBar.Max then
-    VerScrollBar.Max:=Offset.y+PaintBox.Height;
-  if Offset.y<VerScrollBar.Min then
-    VerScrollBar.Min:=Offset.y;
-
+ if MaxFloatPoint.X>PaintBox.Width then
+    MaxP.X:=MaxFloatPoint.X
+  else
+    MaxP.X:=PaintBox.Width;
+  if MaxFloatPoint.Y>PaintBox.Height then
+    MaxP.Y:=MaxFloatPoint.Y
+  else
+    MaxP.Y:=PaintBox.Height;
+  if MinFloatPoint.X<MinP.X then MinP.X:=MinFloatPoint.X;
+  if MinFloatPoint.Y<MinP.Y then MinP.Y:=MinFloatPoint.Y;
+  if Offset.x + PaintBox.Width>MaxP.X then
+    MaxP.X:=Offset.x+PaintBox.Width;
+  if Offset.x<MinP.X then
+    MinP.X:=Offset.x;
+  if Offset.y + PaintBox.Height>MaxP.Y then
+    MaxP.Y:=Offset.y+PaintBox.Height;
+  if Offset.y < MinP.Y then
+    MinP.Y:=Offset.y;
+  HorScrollBar.Min:=round(MinP.X*Scale/100);
+  HorScrollBar.Max:=round(MaxP.X*Scale/100);
+  VerScrollBar.Min:=round(MinP.Y*Scale/100);
+  VerScrollBar.Max:=round(MaxP.Y*Scale/100);
   ScrollBool:=true;
   HorScrollBar.Position:=Offset.x;
   ScrollBool:=true;
@@ -213,19 +213,6 @@ begin
   CreatePropertyPanel;
 end;
 
-procedure TMainForm.PaintBoxResize(Sender: TObject);
-begin
-  if (OldPaintBoxSize <> Point(0,0)) then
-  begin
-    Offset.x:=round(Offset.x-(PaintBox.Width-OldPaintBoxSize.x) div 2);
-    Offset.y:=round(Offset.y-(PaintBox.Height-OldPaintBoxSize.y) div 2);
-  end;
-  transformunit.PaintBoxSize.x:=PaintBox.Width;
-  transformunit.PaintBoxSize.y:=PaintBox.Height;
-  OldPaintBoxSize.x:=PaintBox.Width;
-  OldPaintBoxSize.y:=PaintBox.Height;
-end;
-
 procedure TMainForm.PaintBoxClick(Sender: TObject);
 begin
 
@@ -233,9 +220,9 @@ end;
 
 procedure TMainForm.ShowAllClick(Sender: TObject);
 begin
-    ScaleAll(PaintBox.Height,PaintBox.Width,MinFloatPoint,MaxFloatPoint);
-    ScaleEdit.Value:=round(Scale);
-    Invalidate;
+  ScaleAll(PaintBox.Height,PaintBox.Width,MinFloatPoint,MaxFloatPoint);
+  ScaleEdit.Value:=round(Scale);
+  Invalidate;
 end;
 
 
@@ -243,10 +230,10 @@ procedure TMainForm.ScrollBarScroll(Sender: TObject;
   ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
   if not ScrollBool then
-    begin
-      SetOffset(Point(HorScrollBar.Position,VerScrollBar.Position));
-      Invalidate;
-    end;
+  begin
+    SetOffset(Point(HorScrollBar.Position,VerScrollBar.Position));
+    Invalidate;
+  end;
   ScrollBool:=false;
 end;
 

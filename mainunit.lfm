@@ -1,11 +1,11 @@
 object MainForm: TMainForm
-  Left = 279
+  Left = 490
   Height = 557
-  Top = 230
-  Width = 1092
+  Top = 94
+  Width = 956
   Caption = 'Графический Редактор'
   ClientHeight = 527
-  ClientWidth = 1092
+  ClientWidth = 956
   Constraints.MinHeight = 102
   Constraints.MinWidth = 496
   Menu = MainFormMainMenu
@@ -14,9 +14,9 @@ object MainForm: TMainForm
   LCLVersion = '1.6.4.0'
   object PaintBox: TPaintBox
     Left = 112
-    Height = 527
+    Height = 448
     Top = 0
-    Width = 954
+    Width = 818
     Align = alClient
     Color = clWhite
     Constraints.MaxHeight = 1200
@@ -27,21 +27,20 @@ object MainForm: TMainForm
     OnMouseMove = PaintBoxMouseMove
     OnMouseUp = PaintBoxMouseUp
     OnPaint = PaintBoxPaint
-    OnResize = PaintBoxResize
   end
   object LSidePanel: TPanel
     Left = 0
-    Height = 527
+    Height = 448
     Top = 0
     Width = 112
     Align = alLeft
-    ClientHeight = 527
+    ClientHeight = 448
     ClientWidth = 112
     TabOrder = 0
     object ScaleEdit: TSpinEdit
       Left = 5
       Height = 33
-      Top = 432
+      Top = 408
       Width = 98
       MaxValue = 1000
       MinValue = 10
@@ -52,7 +51,7 @@ object MainForm: TMainForm
     object StaticText3: TStaticText
       Left = 5
       Height = 20
-      Top = 412
+      Top = 376
       Width = 80
       Caption = 'Масштаб'
       TabOrder = 1
@@ -60,32 +59,40 @@ object MainForm: TMainForm
     object ShowAll: TBitBtn
       Left = 5
       Height = 30
-      Top = 376
+      Top = 336
       Width = 98
       Caption = 'Показать все'
       OnClick = ShowAllClick
       TabOrder = 2
     end
   end
-  object HorScrollBar: TScrollBar
-    Left = 112
-    Height = 26
-    Top = 456
-    Width = 952
-    Anchors = [akLeft, akRight, akBottom]
-    PageSize = 0
-    TabOrder = 1
-    OnScroll = ScrollBarScroll
-  end
   object VerScrollBar: TScrollBar
-    Left = 1066
-    Height = 527
+    Left = 930
+    Height = 448
     Top = 0
     Width = 26
     Align = alRight
     Kind = sbVertical
-    PageSize = 0
+    PageSize = 100
+    TabOrder = 1
+    OnScroll = ScrollBarScroll
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 79
+    Top = 448
+    Width = 956
+    Align = alBottom
     TabOrder = 2
+  end
+  object HorScrollBar: TScrollBar
+    Left = 112
+    Height = 26
+    Top = 448
+    Width = 844
+    Anchors = [akLeft, akRight, akBottom]
+    PageSize = 100
+    TabOrder = 3
     OnScroll = ScrollBarScroll
   end
   object MainFormMainMenu: TMainMenu

@@ -5,7 +5,7 @@ unit transformunit;
 interface
 
 uses
-  Classes,GraphMath, SysUtils;
+  Classes,GraphMath, SysUtils, math;
 
 procedure ChangeScaling(AWidth, AHeight: integer; OldScale: double);
 function  W2S(APoint: TFloatPoint): TPoint;
@@ -42,30 +42,37 @@ begin
   oldScale:=Scale;
   Scale:=Scale+50;
   if (Scale>1000) or (Scale<10)then
-    begin
-      Scale:=oldScale;
-      exit;
-    end;
-  Offset.x:=round(AMin.X*Scale/100);
-  Offset.y:=round(AMin.Y*Scale/100);
-end;
-
-procedure ScaleAll(AHeight,AWidth:Integer;AMin,AMax:TFloatPoint);
-var
-  OldScale: Double;
-begin
-  OldScale:=Scale;
-  if (Awidth/(AMax.X-AMin.X))>(AHeight/(AMax.Y-AMin.Y)) then
-    Scale:=AHeight/(AMax.Y-AMin.Y)*100
-  else
-    Scale:=AWidth/(AMax.X-AMin.X)*100;
-  if (Scale > 1000) or (Scale<10) then
   begin
     Scale:=oldScale;
     exit;
   end;
   Offset.x:=round(AMin.X*Scale/100);
   Offset.y:=round(AMin.Y*Scale/100);
+end;
+
+procedure ScaleAll(AHeight,AWidth:Integer;AMin,AMax:TFloatPoint);
+var
+  oldScale: Double;
+  swapPoint: TFloatPoint;
+begin
+  if AMin.X > AMax.X then
+  begin
+    swapPoint:=AMax;
+    AMax:=AMin;
+    AMin:=swapPoint;
+  end;
+  oldScale:=scale;
+  if (AMin.X=AMax.X) and (AMin.Y=AMax.Y) then
+    exit;
+  scale:=round(Min(AHeight/(AMax.Y - AMin.Y)*100,
+    AWidth/(AMax.X-AMin.X)*100))-1;
+  if scale>1000 then
+    scale:=0;
+  if (scale<>oldScale) and (scale<>100)  then
+  begin
+    Offset.x:=round(AMin.X*scale/100)-5;
+    Offset.y:=round(AMin.Y*scale/100)-5;
+  end;
 end;
 
 procedure SetOffset (APoint: TFloatPoint);

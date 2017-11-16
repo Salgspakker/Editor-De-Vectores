@@ -265,14 +265,15 @@ procedure TBrushColorProperty.ObjectsCreate(APanel: TPanel; Value: integer);
 var BrushLabel: TLabel; BrushBox: TColorBox;
 begin
   BrushLabel        :=TLabel.Create(APanel);
-  BrushLabel.Left   :=340;
+  BrushLabel.Left   :=350;
+  BrushLabel.Top    :=30;
   BrushLabel.Caption:='Цвет Заливки';
   BrushLabel.Parent :=APanel;
   BrushBox          :=TColorBox.Create(APanel);
   BrushBox.Style    :=[cbStandardColors,cbExtendedColors,cbSystemColors, cbPrettynames];
   BrushBox.ReadOnly :=True;
-  BrushBox.Top      :=20;
-  BrushBox.left     :=340;
+  BrushBox.Top      :=50;
+  BrushBox.left     :=350;
   BrushBox.ItemIndex:=Value;
   BrushBox.Parent   :=APanel;
   BrushBox.OnChange :=@BrushColorChange;
@@ -285,10 +286,11 @@ var AngleLabel: TLabel;  AngleSpin1: TSpinEdit;
 begin
   AngleLabel         :=TLabel.Create(APanel);
   AngleLabel.Left    :=600;
+  AngleLabel.Top     :=30;
   AngleLabel.Caption :='Скругление угла';
   AngleLabel.Parent  :=APanel;
   AngleSpin1         :=TSpinEdit.Create(APanel);
-  AngleSpin1.Top     :=20;
+  AngleSpin1.Top     :=50;
   AngleSpin1.left    :=600;
   AngleSpin1.Parent  :=APanel;
   AngleSpin1.MinValue:=1;
@@ -300,12 +302,13 @@ var BrushStylesLable: TLabel; BrushStylesBox: TComboBox;
 begin
   BrushStylesLable              :=TLabel.Create(APanel);
   BrushStylesLable.Left         :=470;
+  BrushStylesLable.Top          :=30;
   BrushStylesLable.Caption      :='Стиль заливки';
   BrushStylesLable.Parent       :=APanel;
   BrushStylesBox                :=TComboBox.Create(APanel);
   BrushStylesBox.Items.CommaText:=',,,,,,';
   BrushStylesBox.ReadOnly       :=True;
-  BrushStylesBox.Top            :=20;
+  BrushStylesBox.Top            :=50;
   BrushStylesBox.Left           :=470;
   BrushStylesBox.Style          :=csOwnerDrawFixed;
   BrushStylesBox.ItemIndex      :=Value;
@@ -320,12 +323,13 @@ var PenLable: TLabel; PenBox: TColorBox;
 begin
   PenLable        :=TLabel.Create(APanel);
   PenLable.Left   :=80;
+  PenLable.Top    :=30;
   PenLable.Caption:='Цвет Кисти';
   PenLable.Parent :=APanel;
   PenBox          :=TColorBox.Create(APanel);
   PenBox.Style    :=[cbStandardColors,cbExtendedColors,cbSystemColors, cbPrettyNames];
   PenBox.ReadOnly :=True;
-  PenBox.Top      :=20;
+  PenBox.Top      :=50;
   PenBox.Left     :=80;
   PenBox.ItemIndex:=Value;
   PenBox.Parent   :=APanel;
@@ -338,10 +342,11 @@ var WidthLabel: TLabel; ToolWidth: TSpinEdit;
 begin
   WidthLabel        :=TLabel.Create(APanel);
   WidthLabel.Left   :=10;
+  WidthLabel.Top    :=30;
   WidthLabel.Caption:='Ширина';
   WidthLabel.Parent :=APanel;
   ToolWidth         :=TSpinEdit.Create(APanel);
-  ToolWidth.Top     :=20;
+  ToolWidth.Top     :=50;
   ToolWidth.left    :=10;
   ToolWidth.MinValue:=1;
   ToolWidth.Parent  :=APanel;
@@ -356,10 +361,11 @@ begin
   PenStylesLable              :=TLabel.Create(APanel);
   PenStylesLable.left         :=210;
   PenStylesLable.Caption      :='Стиль Кисти';
+  PenStylesLable.Top          :=30;
   PenStylesLable.Parent       :=APanel;
   PenStylesBox                :=TComboBox.Create(APanel);
   PenStylesBox.ReadOnly       :=True;
-  PenStylesBox.Top            :=20;
+  PenStylesBox.Top            :=50;
   PenStylesBox.left           :=210;
   PenStylesBox.Parent         :=APanel;
   PenStylesBox.Items.CommaText:=',,,,';
@@ -453,13 +459,13 @@ begin
   SetLength(Figures, Length(Figures) + 1);
   Figures[High(Figures)]:=TPolyline.Create;
   with (Figures[High(Figures)] as TPolyline) do
-    begin
-      SetLength(Points, Length(Points) + 1);
-      Points[High(Points)]:=S2W(APoint);
-      FPenStyle:=Self.PenStyle;
-      FPenColor:=Self.PenColor;
-      FWidth:=Self.Width;
-    end;
+  begin
+    SetLength(Points, Length(Points) + 1);
+    Points[High(Points)]:=S2W(APoint);
+    FPenStyle:=Self.PenStyle;
+    FPenColor:=Self.PenColor;
+    FWidth:=Self.Width;
+  end;
   SetMaxMinFloatPoints(S2W(APoint));
 end;
 
@@ -468,16 +474,16 @@ begin
   SetLength(Figures, length(Figures) + 1);
   Figures[high(Figures)]:=TEllipse.Create;
   with (Figures[high(Figures)] as TEllipse) do
-    begin
-      SetLength(Points, 2);
-      Points[0]:=S2W(APoint);
-      Points[1]:=S2W(APoint);
-      FPenStyle:=PenStyle;
-      FBrushStyle:=BrushStyle;
-      FPenColor:=Self.PenColor;
-      FBrushColor:=Self.BrushColor;
-      FWidth:=Width;
-    end;
+  begin
+    SetLength(Points, 2);
+    Points[0]:=S2W(APoint);
+    Points[1]:=S2W(APoint);
+    FPenStyle:=PenStyle;
+    FBrushStyle:=BrushStyle;
+    FPenColor:=Self.PenColor;
+    FBrushColor:=Self.BrushColor;
+    FWidth:=Width;
+  end;
   SetMaxMinFloatPoints(S2W(APoint));
 end;
 
@@ -486,16 +492,16 @@ begin
   SetLength(Figures, length(Figures) + 1);
   Figures[high(Figures)]:=TTriangle.Create;
   with (Figures[high(Figures)] as TTriangle) do
-    begin
-      SetLength(Points, 2);
-      Points[0]:=S2W(APoint);
-      Points[1]:=S2W(APoint);
-      FPenStyle:=PenStyle;
-      FBrushStyle:=BrushStyle;
-      FPenColor:=Self.PenColor;
-      FBrushColor:=Self.BrushColor;
-      FWidth:=Width;
-    end;
+  begin
+    SetLength(Points, 2);
+    Points[0]:=S2W(APoint);
+    Points[1]:=S2W(APoint);
+    FPenStyle:=PenStyle;
+    FBrushStyle:=BrushStyle;
+    FPenColor:=Self.PenColor;
+    FBrushColor:=Self.BrushColor;
+    FWidth:=Width;
+  end;
   SetMaxMinFloatPoints(S2W(APoint));
 end;
 
@@ -504,17 +510,17 @@ begin
   SetLength(Figures, length(Figures) + 1);
   Figures[high(Figures)]:=TRoundRect.Create;
   with (Figures[high(Figures)] as TRoundRect) do
-    begin
-      SetLength(Points, 2);
-      Points[0]:=S2W(APoint);
-      Points[1]:=S2W(APoint);
-      FBrushStyle:=BrushStyle;
-      FPenStyle:=PenStyle;
-      FPenColor:=Self.PenColor;
-      FBrushColor:=Self.BrushColor;
-      FWidth:=Self.Width;
-      FAngle:=Self.Angle;
-    end;
+  begin
+    SetLength(Points, 2);
+    Points[0]:=S2W(APoint);
+    Points[1]:=S2W(APoint);
+    FBrushStyle:=BrushStyle;
+    FPenStyle:=PenStyle;
+    FPenColor:=Self.PenColor;
+    FBrushColor:=Self.BrushColor;
+    FWidth:=Self.Width;
+    FAngle:=Self.Angle;
+  end;
   SetMaxMinFloatPoints(S2W(APoint));
 end;
 
@@ -523,14 +529,14 @@ begin
   SetLength(Figures, length(Figures) + 1);
   Figures[high(Figures)]:=TLine.Create;
   with (Figures[high(Figures)] as TLine) do
-    begin
-      SetLength(Points,2);
-      Points[0]:=S2W(APoint);
-      Points[1]:=S2W(APoint);
-      FPenStyle:=PenStyle;
-      FPenColor:=PenColor;
-      FWidth:=Self.Width;
-    end;
+  begin
+    SetLength(Points,2);
+    Points[0]:=S2W(APoint);
+    Points[1]:=S2W(APoint);
+    FPenStyle:=PenStyle;
+    FPenColor:=PenColor;
+    FWidth:=Self.Width;
+  end;
   SetMaxMinFloatPoints(S2W(APoint));
 end;
 
@@ -539,28 +545,28 @@ begin
   SetLength(Figures, length(Figures) + 1);
   Figures[high(Figures)]:=TMagnifierFrame.Create;
   with (Figures[high(Figures)] as TMagnifierFrame) do
-    begin
-      SetLength(Points, 2);
-      Points[0]:=S2W(APoint);
-      Points[1]:=S2W(APoint);
-      FPenStyle:=psSolid;
-      FPenColor:=clBlack;
-      FWidth:=1;
-    end;
+  begin
+    SetLength(Points, 2);
+    Points[0]:=S2W(APoint);
+    Points[1]:=S2W(APoint);
+    FPenStyle:=psSolid;
+    FPenColor:=clBlack;
+    FWidth:=1;
+  end;
 end;
 
 procedure THandTool.FigureCreate(APoint: TPoint);
 begin
   SetLength(Figures, length(Figures) + 1);
   Figures[high(Figures)]:=THandFigure.Create;
-   with Figures[high(Figures)] do
+  with Figures[high(Figures)] do
   begin
     SetLength(Points,1);
     Points[high(Points)]:=S2W(APoint);
   end;
-   OffsetFirstPoint.x:=Offset.x+APoint.x;
-   OffsetFirstPoint.y:=Offset.y+APoint.y;
-    SetMaxMinFloatPoints(S2W(APoint));
+  OffsetFirstPoint.x:=Offset.x+APoint.x;
+  OffsetFirstPoint.y:=Offset.y+APoint.y;
+  SetMaxMinFloatPoints(S2W(APoint));
 end;
 
 
