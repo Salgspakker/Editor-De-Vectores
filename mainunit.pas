@@ -134,7 +134,7 @@ procedure TMainForm.PaintBoxMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   DWN:=True;
-  CTool.FigureCreate(CTool.FigureClass,Point(X,Y),PenColor,BrushColor);
+  CTool.FigureCreate(Point(X,Y));
     if (ssRight in Shift) then
       RBtn:=true;
   PaintBox.Invalidate;

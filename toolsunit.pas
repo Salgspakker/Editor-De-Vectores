@@ -57,21 +57,25 @@ type
 
   TTool = class
     Name:        string;
-    Angle:       integer;
-    Width:       integer;
-    PenColor:    TColor;
-    BrushStyle:  TBrushStyle;
-    PenStyle:    TPenStyle;
-    BrushColor:  TColor;
     Properties:  array of TProperty;
     FigureClass: TFigureClass;
     procedure AddPoint(APoint: TPoint); virtual;
-    procedure FigureCreate(AFigureClass: TFigureClass; APoint: TPoint;
-      APenColor, ABrushColor: TColor);
+    procedure FigureCreate(Point: TPoint); virtual; abstract;
     procedure StopDraw(X,Y, AHeight, AWidth: integer;
       RBtn: boolean); virtual;
     procedure PropertiesListCreate; virtual; abstract;
     procedure PropertiesCreate(APanel: TPanel);virtual;
+  end;
+
+  TLinesTool = class(TTool)
+    Width: Integer;
+    PenStyle: TPenStyle;
+    PenColor:    TColor;
+  end;
+
+  TFigureTool = class(TLinesTool)
+    BrushStyle: TBrushStyle;
+    BrushColor:  TColor;
   end;
 
   TMagnifierTool = class(TTool)
@@ -79,50 +83,51 @@ type
     procedure PropertiesListCreate; override;
     procedure StopDraw(X,Y, AHeight, AWidth: integer;
       RBtn: boolean); override;
+    procedure FigureCreate(APoint: TPoint); override;
   end;
 
   THandTool = class(TTool)
     Figure: THandFigure;
-    procedure AddPoint(APoint: TPoint); override;
+    procedure AddPoint(APoint: TPoint);override;
     procedure StopDraw(X,Y, AHeight, AWidth: integer;
       RBtn: boolean); override;
     procedure PropertiesListCreate; override;
+    procedure FigureCreate(APoint: TPoint); override;
   end;
 
- TPolylineTool = class(TTool)
-  public
+ TPolylineTool = class(TLinesTool)
     Figure: TPolyline;
     procedure PropertiesListCreate; override;
+    procedure FigureCreate(APoint: TPoint); override;
   end;
 
-  TRectangleTool = class(TTool)
-  public
-    Figure: TRectangle;
-    procedure PropertiesListCreate; override;
-  end;
-
-  TRoundRectTool = class(TTool)
+  TRoundRectTool = class(TFigureTool)
+  Angle: integer;
   public
     Figure: TRoundRect;
     procedure PropertiesListCreate; override;
+    procedure FigureCreate(APoint: TPoint); override;
   end;
 
-  TEllipseTool = class(TTool)
+  TEllipseTool = class(TFigureTool)
   public
     Figure: TEllipse;
     procedure PropertiesListCreate; override;
+    procedure FigureCreate(APoint: TPoint); override;
   end;
 
-  TLineTool = class(TTool)
+  TLineTool = class(TLinesTool)
   public
     Figure: TLine;
     procedure PropertiesListCreate; override;
+    procedure FigureCreate(APoint: TPoint); override;
   end;
 
-  TTriangleTool = class(TTool)
+  TTriangleTool = class(TFigureTool)
   public
     Figure: TTriangle;
     procedure PropertiesListCreate; override;
+    procedure FigureCreate(APoint: TPoint); override;
   end;
 
 var
@@ -133,16 +138,6 @@ var
   CreatePanelHandler: procedure of Object;
 
 implementation
-
-procedure TRectangleTool.PropertiesListCreate;
-begin
-  SetLength(Properties,5);
-  Properties[0]:=TWidthProperty.Create;
-  Properties[1]:=TPenStyleProperty.Create;
-  Properties[2]:=TBrushStyleProperty.Create;
-  Properties[3]:=TPenColorProperty.Create;
-  Properties[4]:=TBrushColorProperty.Create;
-end;
 
 procedure TRoundRectTool.PropertiesListCreate;
 begin
@@ -204,42 +199,42 @@ end;
 procedure TAnglesProperty.AnglesChange(Sender: TObject);
 var i: Integer;
 begin
-  CTool.Angle:=(Sender as TSpinEdit).value;
+  (CTool as TRoundRectTool).angle:=(Sender as TSpinEdit).value;
   InvalidateHandler;
 end;
 
 procedure TBrushStyleProperty.BrushStyleChange(Sender:TObject);
 var i: Integer;
 begin
-  CTool.BrushStyle:=CaseBrushStyle((Sender as TComboBox).ItemIndex);
+  (CTool as TFigureTool).BrushStyle:=CaseBrushStyle((Sender as TComboBox).ItemIndex);
   InvalidateHandler;
 end;
 
 procedure TPenColorProperty.PenColorChange(Sender:TObject);
 var i: Integer;
 begin
-  CTool.PenColor:=(Sender as TColorBox).selected;
+  (CTool as TLinesTool).PenColor:=(Sender as TColorBox).selected;
   InvalidateHandler;
 end;
 
 procedure TWidthProperty.WidthChange(Sender: TObject);
 var i: Integer;
 begin
-  CTool.Width:=(Sender as TSpinEdit).Value ;
+  (CTool as TLinesTool).Width:=(Sender as TSpinEdit).Value ;
   InvalidateHandler;
 end;
 
 procedure TBrushColorProperty.BrushColorChange(Sender: TObject);
 var i: Integer;
 begin
-  CTool.BrushColor:=(Sender as TColorBox).selected;
+  (CTool as TFigureTool).BrushColor:=(Sender as TColorBox).selected;
   InvalidateHandler;
 end;
 
 procedure TPenStyleProperty.PenStyleChange(Sender: TObject);
 var i: Integer;
 begin
-  CTool.PenStyle:=CasePenStyle((Sender as TComboBox).ItemIndex);
+  (CTool as TlinesTool).PenStyle:=CasePenStyle((Sender as TComboBox).ItemIndex);
   InvalidateHandler;
 end;
 
@@ -281,7 +276,7 @@ begin
   BrushBox.Parent   :=APanel;
   BrushBox.OnChange :=@BrushColorChange;
   BrushBox.Selected :=clWhite;
-  CTool.BrushColor  :=clWhite;
+  (CTool as TFigureTool).BrushColor  :=clWhite;
 end;
 
 procedure TAnglesProperty.ObjectsCreate(APanel: TPanel; Value: integer);
@@ -316,7 +311,7 @@ begin
   BrushStylesBox.OnDrawItem     :=@BrushStylesBoxDrawItem;
   BrushStylesBox.Parent         :=APanel;
   BrushStylesBox.OnChange       :=@BrushStyleChange;
-  CTool.BrushStyle              :=bsSolid;
+  (CTool as TFigureTool).BrushStyle              :=bsSolid;
 end;
 
 procedure TPenColorProperty.ObjectsCreate(APanel: TPanel; Value: integer);
@@ -334,7 +329,7 @@ begin
   PenBox.ItemIndex:=Value;
   PenBox.Parent   :=APanel;
   PenBox.OnChange :=@PenColorChange;
-  CTool.PenColor  :=clBlack;
+  (CTool as TLinesTool).PenColor  :=clBlack;
 end;
 
 procedure TWidthProperty.ObjectsCreate(APanel: TPanel; Value: integer);
@@ -351,7 +346,7 @@ begin
   ToolWidth.Parent  :=APanel;
   ToolWidth.Value   :=Value;
   ToolWidth.OnChange:=@WidthChange;
-  CTool.Width       :=1;
+  (CTool as TLinesTool).Width       :=1;
 end;
 
 procedure TPenStyleProperty.ObjectsCreate(APanel: TPanel; Value: integer);
@@ -371,7 +366,7 @@ begin
   PenStylesBox.ItemIndex      :=Value;
   PenStylesBox.OnDrawItem     :=@PenStylesBoxDrawItem;
   PenStylesBox.OnChange       :=@PenStyleChange;
-  CTool.PenStyle              :=psSolid;
+  (CTool as TLinesTool).PenStyle              :=psSolid;
 end;
 
 procedure TTool.PropertiesCreate(APanel: TPanel);
@@ -451,35 +446,129 @@ begin
   end;
 end;
 
-procedure TTool.FigureCreate(AFigureClass: TFigureClass; APoint: TPoint;
-  APenColor, ABrushColor: TColor);
+procedure TPolylineTool.FigureCreate(APoint: TPoint);
 begin
-  SetLength(Figures,length(Figures)+1);
-  Figures[high(Figures)]:=AFigureClass.Create;
-  with Figures[high(Figures)] do
+  SetLength(Figures, Length(Figures) + 1);
+  Figures[High(Figures)]:=TPolyline.Create;
+  with (Figures[High(Figures)] as TPolyline) do
+    begin
+      SetLength(Points, Length(Points) + 1);
+      Points[High(Points)]:=S2W(APoint);
+      FPenStyle:=Self.PenStyle;
+      FPenColor:=Self.PenColor;
+      FWidth:=Self.Width;
+    end;
+  SetMaxMinFloatPoints(S2W(APoint));
+end;
+
+procedure TEllipseTool.FigureCreate(APoint: TPoint);
+begin
+  SetLength(Figures, length(Figures) + 1);
+  Figures[high(Figures)]:=TEllipse.Create;
+  with (Figures[high(Figures)] as TEllipse) do
+    begin
+      SetLength(Points, 2);
+      Points[0]:=S2W(APoint);
+      Points[1]:=S2W(APoint);
+      FPenStyle:=PenStyle;
+      FBrushStyle:=BrushStyle;
+      FPenColor:=Self.PenColor;
+      FBrushColor:=Self.BrushColor;
+      FWidth:=Width;
+    end;
+  SetMaxMinFloatPoints(S2W(APoint));
+end;
+
+procedure TTriangleTool.FigureCreate(APoint: TPoint);
+begin
+  SetLength(Figures, length(Figures) + 1);
+  Figures[high(Figures)]:=TTriangle.Create;
+  with (Figures[high(Figures)] as TTriangle) do
+    begin
+      SetLength(Points, 2);
+      Points[0]:=S2W(APoint);
+      Points[1]:=S2W(APoint);
+      FPenStyle:=PenStyle;
+      FBrushStyle:=BrushStyle;
+      FPenColor:=Self.PenColor;
+      FBrushColor:=Self.BrushColor;
+      FWidth:=Width;
+    end;
+  SetMaxMinFloatPoints(S2W(APoint));
+end;
+
+procedure TRoundRectTool.FigureCreate(APoint: TPoint);
+begin
+  SetLength(Figures, length(Figures) + 1);
+  Figures[high(Figures)]:=TRoundRect.Create;
+  with (Figures[high(Figures)] as TRoundRect) do
+    begin
+      SetLength(Points, 2);
+      Points[0]:=S2W(APoint);
+      Points[1]:=S2W(APoint);
+      FBrushStyle:=BrushStyle;
+      FPenStyle:=PenStyle;
+      FPenColor:=Self.PenColor;
+      FBrushColor:=Self.BrushColor;
+      FWidth:=Self.Width;
+      FAngle:=Self.Angle;
+    end;
+  SetMaxMinFloatPoints(S2W(APoint));
+end;
+
+procedure TLineTool.FigureCreate(APoint: TPoint);
+begin
+  SetLength(Figures, length(Figures) + 1);
+  Figures[high(Figures)]:=TLine.Create;
+  with (Figures[high(Figures)] as TLine) do
+    begin
+      SetLength(Points,2);
+      Points[0]:=S2W(APoint);
+      Points[1]:=S2W(APoint);
+      FPenStyle:=PenStyle;
+      FPenColor:=PenColor;
+      FWidth:=Self.Width;
+    end;
+  SetMaxMinFloatPoints(S2W(APoint));
+end;
+
+procedure TMagnifierTool.FigureCreate(APoint: TPoint);
+begin
+  SetLength(Figures, length(Figures) + 1);
+  Figures[high(Figures)]:=TMagnifierFrame.Create;
+  with (Figures[high(Figures)] as TMagnifierFrame) do
+    begin
+      SetLength(Points, 2);
+      Points[0]:=S2W(APoint);
+      Points[1]:=S2W(APoint);
+      FPenStyle:=psSolid;
+      FPenColor:=clBlack;
+      FWidth:=1;
+    end;
+end;
+
+procedure THandTool.FigureCreate(APoint: TPoint);
+begin
+  SetLength(Figures, length(Figures) + 1);
+  Figures[high(Figures)]:=THandFigure.Create;
+   with Figures[high(Figures)] do
   begin
-    FAngle:=Self.Angle;
-    FBrushStyle:=Self.BrushStyle;
-    FPenStyle:=Self.PenStyle;
-    FWidth:=Self.Width;
-    FPenColor:=Self.PenColor;;
-    FBrushColor:=Self.BrushColor;
     SetLength(Points,1);
     Points[high(Points)]:=S2W(APoint);
   end;
-  OffsetFirstPoint.x:=Offset.x+APoint.x;
-  OffsetFirstPoint.y:=Offset.y+APoint.y;
-  SetMaxMinFloatPoints(S2W(APoint));
+   OffsetFirstPoint.x:=Offset.x+APoint.x;
+   OffsetFirstPoint.y:=Offset.y+APoint.y;
+    SetMaxMinFloatPoints(S2W(APoint));
 end;
+
 
 
 initialization
   RegisterTool(TPolyLineTool.Create,  TPolyLine,       'Карандаш');
   RegisterTool(TLineTool.Create,      TLine,           'Линия');
-  RegisterTool(TRectangleTool.Create, TRectangle,      'Прямоугольник');
   RegisterTool(TEllipseTool.Create,   TEllipse,        'Эллипс');
   RegisterTool(TTriangleTool.Create,  TTRiangle,       'Треугольник');
-  RegisterTool(TRoundRectTool.Create, TRoundRect,      'Круглоугольник');
+  RegisterTool(TRoundRectTool.Create, TRoundRect,      'Прямоугольник');
   RegisterTool(TMagnifierTool.Create, TMagnifierFrame, 'Лупа');
   RegisterTool(THandTool.Create,      THandFigure,     'Рука');
 end.
