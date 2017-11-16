@@ -57,6 +57,7 @@ type
 
   TTool = class
     Name:        string;
+    BitMap:TBitMap;
     Properties:  array of TProperty;
     FigureClass: TFigureClass;
     procedure AddPoint(APoint: TPoint); virtual;
@@ -381,14 +382,15 @@ procedure TTool.StopDraw(X,Y, AHeight, AWidth: integer; RBtn: boolean);
 begin
 end;
 
-procedure RegisterTool(ATool: TTool; AFigureClass: TFigureClass; AName: string);
+procedure RegisterTool(ATool: TTool; AFigureClass: TFigureClass; ABitmapFile: string);
 begin
   SetLength(ToolRegistry,length(ToolRegistry)+1);
   ToolRegistry[high(ToolRegistry)]:=ATool;
   with ToolRegistry[high(ToolRegistry)] do
   begin
     FigureClass:=AFigureClass;
-    Name:=AName;
+    Bitmap := TBitmap.Create;
+    Bitmap.LoadFromFile(ABitmapFile);
   end;
 end;
 
@@ -564,12 +566,12 @@ end;
 
 
 initialization
-  RegisterTool(TPolyLineTool.Create,  TPolyLine,       'Карандаш');
-  RegisterTool(TLineTool.Create,      TLine,           'Линия');
-  RegisterTool(TEllipseTool.Create,   TEllipse,        'Эллипс');
-  RegisterTool(TTriangleTool.Create,  TTRiangle,       'Треугольник');
-  RegisterTool(TRoundRectTool.Create, TRoundRect,      'Прямоугольник');
-  RegisterTool(TMagnifierTool.Create, TMagnifierFrame, 'Лупа');
-  RegisterTool(THandTool.Create,      THandFigure,     'Рука');
+  RegisterTool(TPolyLineTool.Create,  TPolyLine,       'icons/Pencil.bmp');
+  RegisterTool(TLineTool.Create,      TLine,           'icons/Line.bmp');
+  RegisterTool(TEllipseTool.Create,   TEllipse,        'icons/Ellipse.bmp');
+  RegisterTool(TTriangleTool.Create,  TTRiangle,       'icons/Triangle.bmp');
+  RegisterTool(TRoundRectTool.Create, TRoundRect,      'icons/Rectangle.bmp');
+  RegisterTool(TMagnifierTool.Create, TMagnifierFrame, 'icons/Magnifier.bmp');
+  RegisterTool(THandTool.Create,      THandFigure,     'icons/Hand.bmp');
 end.
 
