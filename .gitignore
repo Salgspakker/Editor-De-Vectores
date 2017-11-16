@@ -1,0 +1,15 @@
+
+*.bak
+*.ppu
+*.o
+lib/x86_64-win64/mainunit.lfm
+lib/x86_64-win64/EditorDeVectores.res
+lib/x86_64-win64/EditorDeVectores.obj
+lib/x86_64-win64/EditorDeVectores.compiled
+lib/x86_64-win64/aboutunit.lfm
+backup/mainunit.lfm.bak
+backup/mainunit.lfm.bak
+*.bak
+backup/mainunit.lfm.bak
+*.exe
+*.bak

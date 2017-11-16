@@ -1,0 +1,57 @@
+object AboutForm: TAboutForm
+  Left = 1114
+  Height = 366
+  Top = 272
+  Width = 486
+  BorderStyle = bsDialog
+  BorderWidth = 20
+  Caption = 'О программе'
+  ClientHeight = 366
+  ClientWidth = 486
+  OnCreate = FormCreate
+  Position = poDesktopCenter
+  LCLVersion = '1.6.4.0'
+  object Panel1: TPanel
+    Left = 20
+    Height = 99
+    Top = 20
+    Width = 446
+    Align = alTop
+    BorderWidth = 10
+    BorderStyle = bsSingle
+    Caption = 'Программа: векторный редактор'
+    Font.Color = clBtnText
+    Font.Height = -24
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+  end
+  object Label1: TLabel
+    Left = 20
+    Height = 25
+    Top = 312
+    Width = 97
+    Caption = 'Разработал:'
+    Font.Color = clBackground
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label2: TLabel
+    Left = 128
+    Height = 25
+    Top = 312
+    Width = 342
+    Caption = 'Студент первого курса Жаворонков В.Е.'
+    Font.Style = [fsItalic, fsUnderline]
+    ParentColor = False
+    ParentFont = False
+  end
+  object LabelMain: TLabel
+    Left = 57
+    Height = 25
+    Top = 132
+    Width = 91
+    Caption = 'Позволяет:'
+    ParentColor = False
+  end
+end

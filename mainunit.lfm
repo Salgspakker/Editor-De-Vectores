@@ -1,0 +1,109 @@
+object MainForm: TMainForm
+  Left = 674
+  Height = 557
+  Top = 143
+  Width = 1092
+  Caption = 'Графический Редактор'
+  ClientHeight = 527
+  ClientWidth = 1092
+  Constraints.MinHeight = 102
+  Constraints.MinWidth = 496
+  Menu = MainFormMainMenu
+  OnCreate = FormCreate
+  Position = poDesktopCenter
+  LCLVersion = '1.6.4.0'
+  object PaintBox: TPaintBox
+    Left = 112
+    Height = 527
+    Top = 0
+    Width = 954
+    Align = alClient
+    Color = clWhite
+    Constraints.MaxHeight = 1200
+    Constraints.MaxWidth = 1200
+    ParentColor = False
+    OnClick = PaintBoxClick
+    OnMouseDown = PaintBoxMouseDown
+    OnMouseMove = PaintBoxMouseMove
+    OnMouseUp = PaintBoxMouseUp
+    OnPaint = PaintBoxPaint
+    OnResize = PaintBoxResize
+  end
+  object LSidePanel: TPanel
+    Left = 0
+    Height = 527
+    Top = 0
+    Width = 112
+    Align = alLeft
+    ClientHeight = 527
+    ClientWidth = 112
+    TabOrder = 0
+    object ScaleEdit: TSpinEdit
+      Left = 5
+      Height = 33
+      Top = 432
+      Width = 98
+      MaxValue = 1000
+      MinValue = 10
+      OnChange = ScaleEditChange
+      TabOrder = 0
+      Value = 10
+    end
+    object StaticText3: TStaticText
+      Left = 5
+      Height = 20
+      Top = 412
+      Width = 80
+      Caption = 'Масштаб'
+      TabOrder = 1
+    end
+    object ShowAll: TBitBtn
+      Left = 5
+      Height = 30
+      Top = 376
+      Width = 98
+      Caption = 'Показать все'
+      OnClick = ShowAllClick
+      TabOrder = 2
+    end
+  end
+  object HorScrollBar: TScrollBar
+    Left = 112
+    Height = 26
+    Top = 456
+    Width = 952
+    Anchors = [akLeft, akRight, akBottom]
+    PageSize = 0
+    TabOrder = 1
+    OnScroll = ScrollBarScroll
+  end
+  object VerScrollBar: TScrollBar
+    Left = 1066
+    Height = 527
+    Top = 0
+    Width = 26
+    Align = alRight
+    Kind = sbVertical
+    PageSize = 0
+    TabOrder = 2
+    OnScroll = ScrollBarScroll
+  end
+  object MainFormMainMenu: TMainMenu
+    left = 16
+    top = 512
+    object MenuItemFile: TMenuItem
+      Caption = 'Файл'
+      object MenuItemExit: TMenuItem
+        Caption = 'Выход'
+        OnClick = MenuItemExitClick
+      end
+    end
+    object MenuItemRef: TMenuItem
+      Caption = 'Справка'
+      object MenuItemAbout: TMenuItem
+        Caption = 'О программе'
+        OnClick = MenuItemAboutClick
+      end
+    end
+  end
+end
